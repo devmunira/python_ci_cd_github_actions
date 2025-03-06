@@ -7,7 +7,7 @@ def create_app():
     @app.route('/')
     def home():
         print("hi hello")
-        return 'Hi Sudhanshu'
+        return 'Hi Sudhanshu.'
 
     return app
     
