@@ -1,21 +1,25 @@
 FROM python:3.9-slim
 
-# Set Workdir
+# # Create a non-root user and group
+# RUN groupadd -r appuser && useradd -r -g appuser appuser
+
+# Set the working directory
 WORKDIR /app
 
-# Copy file
+# Copy the application files
 COPY . /app
 
-# Install Dependencies & Create user & group
-RUN groupadd -r appUserGroup && \
-    useradd -r -g appUserGroup appuser && \
-    pip install -r requirements.txt && \
-    chown -R appUserGroup:appuser /app
+# Install dependencies as root user first (this step needs root permissions)
+RUN groupadd -r appuser && \
+    useradd -r -g appuser appuser && \
+    pip install -r requirements.txt && \ 
+    chown -R appuser:appuser /app
 
-# EXpose Port & User
+# Expose port 80
 EXPOSE 80
 
+# Switch to the non-root user
 USER appuser
 
-# CMD Command Run
-ENTRYPOINT [ "python", "app.py" ]
+# Run the application as the non-root user
+ENTRYPOINT ["python", "app.py"]
